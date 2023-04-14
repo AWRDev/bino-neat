@@ -50,6 +50,8 @@ class Game:
         # blit the text surface to the top-left corner of the screen
         self.window.blit(text_surface, (10, 10))
 
+    def _get_offset(self, obj1: pygame.sprite.Sprite, obj2: pygame.sprite.Sprite):
+        return (obj2.rect.x-obj1.rect.x, obj2.rect.y-obj1.rect.y)
     def draw(self):
         self._draw_background()
         self._draw_score()
@@ -68,19 +70,32 @@ class Game:
                 self.level += 1
                 self.enemy.velocity_x += 2
         if self.player.rect.colliderect(self.enemy.rect):
-            self.playing = False
+            if self.player.mask.overlap(self.enemy.mask, self._get_offset(self.player,self.enemy)):
+                self.playing = False
         
 
 if __name__ == "__main__":
     g = Game(window, width, height)
-    while True:
+    while g.playing:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     g.player.jump()
+
+        keys = pygame.key.get_pressed()
+            
+        if keys[pygame.K_a]:
+            g.enemy.move(1)
+        if keys[pygame.K_d]:
+            g.enemy.move(-1)
+                
         g.update()
         g.draw()
+        # overlap_mask = g.player.mask.overlap_mask(g.enemy.mask, g._get_offset(g.player,g.enemy))
+        # overlap_surf = overlap_mask.to_surface(setcolor= (255, 0, 0))
+        # overlap_surf.set_colorkey((0, 0, 0))
+        # window.blit(overlap_surf, g.player.rect)
         pygame.display.flip()
     

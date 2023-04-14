@@ -11,6 +11,8 @@ class Scorpio(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x + self.width / 2, y - self.height / 2)
 
+        self.mask = pygame.mask.from_surface(self.image)
+
         self.init_x = x
         self.init_y = y - self.height
 
@@ -26,7 +28,10 @@ class Scorpio(pygame.sprite.Sprite):
     def update(self):
         self.rect.centerx -= self.velocity_x
         self.x = self.rect.centerx
-
+    
+    def move(self, offset):
+        self.rect.centerx -= offset
+        self.x = self.rect.centerx
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)

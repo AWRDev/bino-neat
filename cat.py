@@ -13,6 +13,8 @@ class Cat(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x + self.width / 2, y - self.height / 2)
 
+        self.mask = pygame.mask.from_surface(self.image)
+
 
         self.init_x = x
         self.init_y = y - self.height
