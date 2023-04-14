@@ -1,1 +1,22 @@
-/venv
+# Ignore compiled Python files
+*.pyc
+
+# Ignore Pygame build files
+*.so
+*.dll
+*.pyd
+
+# Ignore distribution build files
+dist/
+build/
+
+# Ignore virtual environment files
+venv/
+.venv/
+
+# Ignore PyCharm IDE files
+.idea/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
