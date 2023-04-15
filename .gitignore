@@ -17,6 +17,9 @@ venv/
 # Ignore PyCharm IDE files
 .idea/
 
+# Ignore VSCode IDE files
+.vscode/
+
 # Ignore system-specific files
 .DS_Store
 Thumbs.db
