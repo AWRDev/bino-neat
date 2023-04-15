@@ -22,6 +22,7 @@ class Cat(pygame.sprite.Sprite):
         self.x = x
         self.y = y - self.height
 
+        self.lives = 1
         self.velocity_y = 0
 
         self.gravity = 0.15

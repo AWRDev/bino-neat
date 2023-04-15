@@ -3,6 +3,7 @@ import pygame
 
 from cat import Cat
 from scorpio import Scorpio
+from health import HealthPickup
 
 pygame.init()
 width, height = 800, 600
@@ -27,10 +28,13 @@ class Game:
         self.offset = 0
 
         self.player = Cat(50, window_height)
+        self.player_immune = False
         self.enemy = Scorpio(500, window_height - self.bt_height)
 
         self.player_g = pygame.sprite.Group()
         self.player_g.add(self.player)
+
+        self.pickups = pygame.sprite.Group()
 
         self.score = 0
         self.level = 1
@@ -49,21 +53,45 @@ class Game:
         text_surface = font.render("Score: " + str(self.score), True, (0, 0, 0))
         # blit the text surface to the top-left corner of the screen
         self.window.blit(text_surface, (10, 10))
+    
+    def _draw_live_counter(self):
+        font = pygame.font.SysFont("Comic Sans", 24)
+        text_surface = font.render("Lives: " + str(self.player.lives), True, (0, 0, 0))
+        # blit the text surface to the top-left corner of the screen
+        self.window.blit(text_surface, (700, 10))
+
+    def _draw_ui(self):
+        self._draw_background()
+        self._draw_score()
+        self._draw_live_counter()
 
     def _get_offset(self, obj1: pygame.sprite.Sprite, obj2: pygame.sprite.Sprite):
         return (obj2.rect.x-obj1.rect.x, obj2.rect.y-obj1.rect.y)
     def draw(self):
-        self._draw_background()
-        self._draw_score()
+        self._draw_ui()
         self._draw_base()
         self.player_g.draw(self.window)
         self.player.draw_rect(self.window)
         self.enemy.draw(self.window)
-    
+        self.pickups.draw(self.window)
+    def gen_pickups(self, level):
+        if level<0:
+            return
+        else:
+            match level:
+                case 1:
+                    if (len(self.pickups)>=1):
+                        return
+                    self.pickups.add(HealthPickup())
+
+        
     def update(self):
+        self.gen_pickups(self.level)
         self.enemy.update()
         self.player.update()
+        self.pickups.update()
         if self.enemy.x <= 0:
+            self.player_immune = False
             self.enemy.respawn()
             self.score += 1
             if self.score != 0 and self.score % 20 == 0:
@@ -71,7 +99,15 @@ class Game:
                 self.enemy.velocity_x += 2
         if self.player.rect.colliderect(self.enemy.rect):
             if self.player.mask.overlap(self.enemy.mask, self._get_offset(self.player,self.enemy)):
-                self.playing = False
+                if not self.player_immune:
+                    self.player.lives -= 1
+                self.player_immune = True
+                if self.player.lives == 0:
+                    self.playing = False
+        collected_pickups = pygame.sprite.spritecollide(self.player, self.pickups, False)
+        if collected_pickups:
+                self.player.lives += 1
+                self.pickups.remove(collected_pickups[0])
         
 
 if __name__ == "__main__":
