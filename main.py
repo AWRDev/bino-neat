@@ -30,7 +30,7 @@ class BinoGame:
                 case 0:
                     pass
                 case 1:
-                    self.game.player.jump()
+                    self.game.player.move_jump()
             self.game.update()
             self.game.draw()
             pygame.display.flip()

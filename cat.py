@@ -50,10 +50,20 @@ class Cat(pygame.sprite.Sprite):
             self.velocity_y = 0
             self.delta_time = 1
 
-    def jump(self):
+    def move_jump(self):
         # if self.y >= self.init_y:
         if self.rect.centery >= self.init_y:
             self.velocity_y = self.jump_velocity
+    
+    def move_lay(self):
+        self.image = pygame.image.load("./assets/textures/bino_laying_128.png")
+        self.height = self.image.get_height()
+        self.width = self.image.get_width()
+
+        self.rect = self.image.get_rect()
+        #self.rect.center = (self.rect.centerx + self.width / 2, self.rect.centery - self.height / 2)
+
+        self.mask = pygame.mask.from_surface(self.image)
 
     # def draw(self, screen):
     #     screen.blit(self.texture, (self.x, self.y))

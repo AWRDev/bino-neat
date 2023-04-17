@@ -1,9 +1,11 @@
 import math
+import random
 import pygame
 
 from cat import Cat
 from scorpio import Scorpio
 from health import HealthPickup
+from coin import CoinPickup
 
 pygame.init()
 width, height = 800, 600
@@ -16,6 +18,7 @@ class Game:
         self.window_width = window_width
         self.window_height = window_height
         self.window = window
+        self.clock = pygame.time.Clock()
 
         self.base_texture = pygame.image.load("./assets/textures/bino_base_64.png")
         self.base_texture = pygame.transform.scale2x(self.base_texture)
@@ -75,21 +78,27 @@ class Game:
         self.enemy.draw(self.window)
         self.pickups.draw(self.window)
     def gen_pickups(self, level):
-        if level<0:
+        rand = random.random()
+        if level<0 or rand<0.9998:
             return
         else:
+            print(rand)
             match level:
                 case 1:
                     if (len(self.pickups)>=1):
                         return
-                    self.pickups.add(HealthPickup())
+                    self.pickups.add(random.choice([HealthPickup(), CoinPickup()]))
 
         
     def update(self):
+        self.clock.tick(60)
         self.gen_pickups(self.level)
         self.enemy.update()
         self.player.update()
         self.pickups.update()
+        for pickup in self.pickups:
+            if pickup.rect.centerx <= 0:
+                self.pickups.remove(pickup)
         if self.enemy.x <= 0:
             self.player_immune = False
             self.enemy.respawn()
@@ -118,7 +127,9 @@ if __name__ == "__main__":
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    g.player.jump()
+                    g.player.move_jump()
+                if event.key == pygame.K_s:
+                    g.player.move_lay()
 
         keys = pygame.key.get_pressed()
             
